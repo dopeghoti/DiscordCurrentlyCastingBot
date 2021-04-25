@@ -1,0 +1,9 @@
+{
+    "apps": [{
+        "name": "CurrentlyCastingBot",
+        "cwd": "./",
+        "script": "bot.py",
+        "args": "",
+	"interpreter": "python3"
+    }]
+}

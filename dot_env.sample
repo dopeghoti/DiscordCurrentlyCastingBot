@@ -1,0 +1,9 @@
+DISCORD_TOKEN=YourDiscordAuthenticationToken
+DISCORD_GUILD=YourDiscordServerName
+DISCORD_PREFIX=!
+DISCORD_MONITOR=channel_name_to_watch
+DISCORD_CONTROL=channel_name_for_controlling_bot
+TWITCH_CLIENTID=YourTwitchClientIDToken
+TWITCH_SECRET=YourTwitchOauthBearerToken
+CHANNELS=channel_SQLite_db_file
+WATCH_LENGTH=20
