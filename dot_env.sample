@@ -1,8 +1,8 @@
 DISCORD_TOKEN=YourDiscordAuthenticationToken
-DISCORD_GUILD=YourDiscordServerName
+DISCORD_GUILD=YourDiscordServerID
 DISCORD_PREFIX=!
-DISCORD_MONITOR=channel_name_to_watch
-DISCORD_CONTROL=channel_name_for_controlling_bot
+DISCORD_MONITOR=channel_id_to_watch
+DISCORD_CONTROL=channel_id_for_controlling_bot
 TWITCH_CLIENTID=YourTwitchClientIDToken
 TWITCH_SECRET=YourTwitchOauthBearerToken
 CHANNELS=channel_SQLite_db_file
