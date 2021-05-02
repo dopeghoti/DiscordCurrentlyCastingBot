@@ -230,17 +230,6 @@ async def report_list( ctx ):
     streamers = watchlist()
     await ControlChannel.send( f'The current streamer list consists of {", ".join( streamers )}.' )
 
-@bot.command( name='numbers', help='Call for Numbers', pass_context=True )
-async def numbers_call( ctx, topic ):
-    MyServer = bot.guilds[0]
-    msg = await ctx.send( f'A call for Numbers has been made.   What are your feelings on {topic}?' )
-    for n in ('one', 'two', 'three', 'four', 'five'):
-        await bot.add_reaction( msg, n )
-
-@bot.command( name='numbers?', help='Explain Numbers' )
-async def numbers_call( ctx ):
-    await ctx.send( 'TODO: Explain Numbers.' )
-
 @loop( seconds = 90 )
 async def find_messages():
     log( 'Tick start.' )
