@@ -7,7 +7,7 @@ class Database( object ):
     def __init__( self, db_location = None ):
         """Initialize the class variables, create the schema in the DB if not already preasent"""
         if db_location is None:
-            load_dotenv()
+            load_dotenv( dotenv_path = './.env' )
             db_location = os.getenv( 'CHANNELS' )
         if db_location is not None:
             try:

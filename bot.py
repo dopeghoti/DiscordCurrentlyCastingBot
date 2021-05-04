@@ -8,12 +8,12 @@ from asyncio import sleep
 from datetime import datetime
 from channeldb import Database
 
-load_dotenv()
+load_dotenv( dotenv_path = './.env' )
 TOKEN    = os.getenv( 'DISCORD_TOKEN'   )
 GUILD    = os.getenv( 'DISCORD_GUILD'   )
 PREFIX   = os.getenv( 'DISCORD_PREFIX'  )
-CONTROL  = os.getenv( 'DISCORD_CONTROL' )
-MONITOR  = os.getenv( 'DISCORD_MONITOR' )
+CONTROL  = int( os.getenv( 'DISCORD_CONTROL' ) )
+MONITOR  = int( os.getenv( 'DISCORD_MONITOR' ) )
 TWITCH   = os.getenv( 'TWITCH_CLIENTID' )
 TWITCH_S = os.getenv( 'TWITCH_SECRET' )
 DATABASE = os.getenv( 'CHANNELS' )
@@ -152,8 +152,8 @@ async def on_ready():
     # all_channels = bot.get_all_channels()
     global MyServer, MonitorChannel, ControlChannel
     MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, name = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     log( f'{bot.user.name} has connected to the {MyServer.name} Discord.' )
     log( f'Monitoring channel #{MonitorChannel.name} (id: {MonitorChannel.id})' )
     log( f'Control channel    #{ControlChannel.name} (id: {ControlChannel.id})' )
@@ -162,8 +162,8 @@ async def on_ready():
 @bot.command( name='hello', help='Test routine responds with a random answer' )
 async def hello_world( ctx ):
     MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, name = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id != ControlChannel.id:
         return
     hello_answers = [
@@ -179,7 +179,7 @@ async def hello_world( ctx ):
 @bot.command( name='watch', help='Add a channel to the watch list' )
 async def watch_channel( ctx, target ):
     MyServer = bot.guilds[0]
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id != ControlChannel.id:
         return
     await ctx.channel.delete_messages( [ ctx.message ] )
@@ -191,7 +191,7 @@ async def watch_channel( ctx, target ):
 @bot.command( name='unwatch', help='Remove a channel from the watch list' )
 async def unwatch_channel( ctx, target ):
     MyServer = bot.guilds[0]
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id != ControlChannel.id:
         return
     await ctx.channel.delete_messages( [ ctx.message ] )
@@ -203,8 +203,8 @@ async def unwatch_channel( ctx, target ):
 @bot.command( name='purge', help='Clear messages in the monitor channel' )
 async def purge( ctx, number ):
     MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, name = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id != ControlChannel.id:
         return
     msgs = []
@@ -214,33 +214,27 @@ async def purge( ctx, number ):
 
 @bot.command( name='refresh', help='Manually refresh the Monitor Channel' )
 async def refresh_channel( ctx ):
+    log( 'Manual monitor channel refresh not yet implemented.' )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    if ctx.channel.id != ControlChannel.id:
+        return
+    await ControlChannel.send( f'Manual refresh not yet implemented.' )
     pass
 
 @bot.command( name='list', help='Report a list of everyone in the Database' )
 async def report_list( ctx ):
     MyServer = bot.guilds[0]
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id != ControlChannel.id:
         return
     streamers = watchlist()
     await ControlChannel.send( f'The current streamer list consists of {", ".join( streamers )}.' )
 
-@bot.command( name='numbers', help='Call for Numbers', pass_context=True )
-async def numbers_call( ctx, topic ):
-    MyServer = bot.guilds[0]
-    msg = await ctx.send( f'A call for Numbers has been made.   What are your feelings on {topic}?' )
-    for n in ('one', 'two', 'three', 'four', 'five'):
-        await bot.add_reaction( msg, n )
-
-@bot.command( name='numbers?', help='Explain Numbers' )
-async def numbers_call( ctx ):
-    await ctx.send( 'TODO: Explain Numbers.' )
-
 @loop( seconds = 90 )
 async def find_messages():
     log( 'Tick start.' )
     MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, name = MONITOR )
+    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
     # Find list of message with apparent Twitch URLs
     pattern = re.compile( r'twitch\.tv/([^-=?&/\s]+)')
     msgs = await MonitorChannel.history().flatten()
@@ -325,8 +319,8 @@ find_messages.start()
 @bot.event
 async def on_command_error( ctx, error ):
     MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, name = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, name = CONTROL )
+    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
+    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id not in ( ControlChannel.id, MonitorChannel.id ):
         return
     if isinstance( error, commands.CommandNotFound ):
