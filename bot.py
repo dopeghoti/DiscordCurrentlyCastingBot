@@ -49,6 +49,7 @@ def handle_bad_token():
         err( f'Problem:  HTTP/{p.status_code} returned from Twitch API when fetching OAuth Token.' )
 
 def get_online_streamers():
+    twitch_api_problem = False
     if DEBUG:
         log( f'Now in get_online_streamers()' )
     channels = watchlist()
@@ -64,6 +65,7 @@ def get_online_streamers():
     if DEBUG:
         log( f'HTTP request made.  Response is HTTP/{r.status_code}.' )
     if r.status_code != 200:
+        twitch_api_problem = True
         # The response code was not an expected value.
         err( f'HTTP/{r.status_code} received from API call.  Something went wrong.' )
         err( f'{r.content}' )
@@ -71,6 +73,8 @@ def get_online_streamers():
             err( f'Probably a bad OAuth Token.' )
             handle_bad_token()
         return []
+    if twitch_api_problem:
+        return None
     onlinechannels = []
     if DEBUG:
         log( f'{r.json()}' )
@@ -95,6 +99,8 @@ def get_channel_status():
     if DEBUG:
         log( f'Calling get_onine_streamers()' )
     onlinechannels = get_online_streamers()
+    if onlinechannels == None:
+        return None
     if DEBUG:
         log( f'Returned from get_onine_streamers()' )
     channelstatus = {}
@@ -243,76 +249,80 @@ async def find_messages():
     reportedchannels = []
     channelstatus = get_channel_status()
     log( f'Fetched Twitch channel status for {len(channelstatus)} channels.' )
-    for twitcher in watchlist():
-        # Collect list of channels which are a> online and b> on the List
-        if channelstatus[ twitcher.lower() ]:
-            reportedchannels.append( twitcher.lower() )
-        else:
-            pass
-    log( 'Updated list of online watched channels' )
-    for message in msgs:
-        match = pattern.search( message.content )
-        if match:
-            needles[message] = match.groups()[0]
-    # Purge messages which should not be present
-    log( 'Starting message purge' )
-    for message in needles.keys():
-        if needles[message] in reportedchannels:
-            pass
-        else:
-            # It's either a link to a stale channel or one that's not on the list
-            log( f'{needles[message]} is not both live and listed.  Purging.' )
-            # if needles[message] in watchlist():
-                # update_watch( streamer = needles[message], online = False )
-            await MonitorChannel.delete_messages( [ message ] )
-    # Add messages which should be present
-    log( 'Starting message posting' )
-    for watchedchannel in watchlist():
-        if ( watchedchannel in reportedchannels ) and ( watchedchannel not in needles.values() ):
-            log( f'Posting a plug for {watchedchannel.title()}' )
-            prefixes = [
-                    'Guess what?',
-                    'Look what I found!',
-                    'What if I told you that',
-                    'Breaking news:',
-                    'Let me tell you a story.',
-                    'No heckin'' way!',
-                    'Want to hear a secret?',
-                    'Is this thing on?',
-                    'Major Tom to Ground Control:',
-                    'O frabjous day!' ]
-            actions = [
-                    'is now broadcasting',
-                    'has gone on the air',
-                    'just went live',
-                    'remembered to hit "Go Live"',
-                    'has blessed us with eir presence',
-                    'is presenting to the masses'
-                    ]
-            calls = [
-                    'Check em out at',
-                    'You can watch at',
-                    'See eir slick moves at',
-                    'Show some love- click',
-                    'To watch, you can go to',
-                    'Say hello at',
-                    'Enjoy eir show at'
-                    ]
-            suffixes = [
-                    'if you like.',
-                    'at your convenience.',
-                    '- don''t forget to like and subscribe!',
-                    'and report back when they are finished.',
-                    '- and remember your Twitch Prime sub!',
-                    'should you feel so inclined',
-                    'and let em know if eir mic has been muted this whole time.',
-                    'to join the fun.'
-                    ]
-            response = f'{random.choice(prefixes)} `{watchedchannel.title()}` {random.choice(actions)}!  {random.choice(calls)} https://twitch.tv/{watchedchannel} {random.choice(suffixes)}'
-            await MonitorChannel.send( response )
-        else:
-            pass
+    if channelstatus != None:
+        for twitcher in watchlist():
+            # Collect list of channels which are a> online and b> on the List
+            if channelstatus[ twitcher.lower() ]:
+                reportedchannels.append( twitcher.lower() )
+            else:
+                pass
+        log( 'Updated list of online watched channels' )
+        for message in msgs:
+            match = pattern.search( message.content )
+            if match:
+                needles[message] = match.groups()[0]
+        # Purge messages which should not be present
+        log( 'Starting message purge' )
+        for message in needles.keys():
+            if needles[message] in reportedchannels:
+                pass
+            else:
+                # It's either a link to a stale channel or one that's not on the list
+                log( f'{needles[message]} is not both live and listed.  Purging.' )
+                # if needles[message] in watchlist():
+                    # update_watch( streamer = needles[message], online = False )
+                await MonitorChannel.delete_messages( [ message ] )
+        # Add messages which should be present
+        log( 'Starting message posting' )
+        for watchedchannel in watchlist():
+            if ( watchedchannel in reportedchannels ) and ( watchedchannel not in needles.values() ):
+                log( f'Posting a plug for {watchedchannel.title()}' )
+                prefixes = [
+                        'Guess what?',
+                        'Look what I found!',
+                        'What if I told you that',
+                        'Breaking news:',
+                        'Let me tell you a story.',
+                        'No heckin'' way!',
+                        'Want to hear a secret?',
+                        'Is this thing on?',
+                        'Major Tom to Ground Control:',
+                        'O frabjous day!' ]
+                actions = [
+                        'is now broadcasting',
+                        'has gone on the air',
+                        'just went live',
+                        'remembered to hit "Go Live"',
+                        'has blessed us with eir presence',
+                        'is presenting to the masses'
+                        ]
+                calls = [
+                        'Check em out at',
+                        'You can watch at',
+                        'See eir slick moves at',
+                        'Show some love- click',
+                        'To watch, you can go to',
+                        'Say hello at',
+                        'Enjoy eir show at'
+                        ]
+                suffixes = [
+                        'if you like.',
+                        'at your convenience.',
+                        '- don''t forget to like and subscribe!',
+                        'and report back when they are finished.',
+                        '- and remember your Twitch Prime sub!',
+                        'should you feel so inclined',
+                        'and let em know if eir mic has been muted this whole time.',
+                        'to join the fun.'
+                        ]
+                response = f'{random.choice(prefixes)} `{watchedchannel.title()}` {random.choice(actions)}!  {random.choice(calls)} https://twitch.tv/{watchedchannel} {random.choice(suffixes)}'
+                await MonitorChannel.send( response )
+            else:
+                pass
+    else:
+        log( 'Something aborted this loop.' )
     log( 'Tick end.' )
+
 find_messages.before_loop( bot.wait_until_ready )
 find_messages.start()
 
