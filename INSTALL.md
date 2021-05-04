@@ -1,3 +1,4 @@
+ - Install Python dependencies: `pip3 install -U -r requirements.txt`
  - Copy dot_env.sample to .env
  - Enable Dev Mode in your Discord client
  - Find your Discord Guild's ID, fill that in for VAR in .env
