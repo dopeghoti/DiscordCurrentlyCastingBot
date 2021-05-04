@@ -1,2 +1,6 @@
 discord.py
+<<<<<<< HEAD
 discord-py-slash-command
+=======
+discort-py-slash-command
+>>>>>>> 58fc08c8abd8526de74758864cba6188d71e6f7d
