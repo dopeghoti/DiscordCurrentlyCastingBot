@@ -308,7 +308,7 @@ async def find_messages():
                     'and let em know if eir mic has been muted this whole time.',
                     'to join the fun.'
                     ]
-            response = f'{random.choice(prefixes)}\n`{watchedchannel.title()}` {random.choice(actions)}!\n{random.choice(calls)} https://twitch.tv/{watchedchannel} {random.choice(suffixes)}'
+            response = f'{random.choice(prefixes)} `{watchedchannel.title()}` {random.choice(actions)}!  {random.choice(calls)} https://twitch.tv/{watchedchannel} {random.choice(suffixes)}'
             await MonitorChannel.send( response )
         else:
             pass
