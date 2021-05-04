@@ -8,12 +8,12 @@ from asyncio import sleep
 from datetime import datetime
 from channeldb import Database
 
-load_dotenv()
+load_dotenv( dotenv_path = './.env' )
 TOKEN    = os.getenv( 'DISCORD_TOKEN'   )
 GUILD    = os.getenv( 'DISCORD_GUILD'   )
 PREFIX   = os.getenv( 'DISCORD_PREFIX'  )
-CONTROL  = os.getenv( 'DISCORD_CONTROL' )
-MONITOR  = os.getenv( 'DISCORD_MONITOR' )
+CONTROL  = int( os.getenv( 'DISCORD_CONTROL' ) )
+MONITOR  = int( os.getenv( 'DISCORD_MONITOR' ) )
 TWITCH   = os.getenv( 'TWITCH_CLIENTID' )
 TWITCH_S = os.getenv( 'TWITCH_SECRET' )
 DATABASE = os.getenv( 'CHANNELS' )
