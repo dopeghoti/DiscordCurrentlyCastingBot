@@ -1,9 +1,13 @@
+# Files specific to this project
+*.sqlite-journal
+*.sqlite
+*.log
+*.err
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.log
-*.err
 
 # C extensions
 *.so
