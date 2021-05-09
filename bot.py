@@ -237,7 +237,10 @@ async def find_messages():
     MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
     # Find list of message with apparent Twitch URLs
     pattern = re.compile( r'twitch\.tv/([^-=?&/\s]+)')
-    msgs = await MonitorChannel.history().flatten()
+    try:
+        msgs = await MonitorChannel.history().flatten()
+    except DiscordServerError:
+        err( f'Error fetching channel message history' )
     log( 'Fetched Discord channel messages' )
     needles = {} # from the haystack of messages
     reportedchannels = []
