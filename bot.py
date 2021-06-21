@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, re, random, discord, requests, curses
+import os, re, random, discord, requests
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord.ext.tasks import loop
