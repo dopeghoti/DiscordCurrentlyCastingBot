@@ -1,0 +1,43 @@
+ - Install Python dependencies: `pip3 install -U -r requirements.txt`
+ - Copy `dot_env.sample` to `.env`
+ - Enable Dev Mode in your Discord client
+ - Find your Discord Guild's ID, fill that in for `DISCORD_GUILD` in `.env`
+ - Find your Monitor channel's ID, fill that in for `DISCORD_MONITOR` in `.env`
+ - Find your Control channel's ID, fill that in for `DISCORD_CONTROL` in `.env`
+ - Select a file name for your channel database (e. g. `channeldb.sqilte`, fill that in for `CHANNELS` in `.env`
+ - Set up Discord API connection:
+   - Go to https://discord.com/developers/applications [log in if needed]
+   - Click New Application
+   - Select a name for the Bot (this will be the Discord client "name" the bot logs in with) and proceed
+   - On the left, click Bot, and then 'Add Bot', and then 'Yes, do it!'.  The Bot now exists insofar as
+     Discord is concerned.
+   - Click Copy under the Token section, paste into `.env` for `DISCORD_TOKEN`
+ - Set up the Twitch API connection:
+   - Log in at https://dev.twitch.tv, click Your Console in the top right
+   - Go to Applications, click Register Your Application
+   - Select a Name
+   - For an OAuth Redirect URL, use 'https://localhost'
+   - For Category, select Application Integration
+   - Once created, on the right click Manage
+   - Copy the Client ID, paste into `.env` for `TWITCH_CLIENTID`
+   - Click New Secret, confirm you want one
+   - Copy the Client Secret, paste into `.env` for `TWITCH_SECRET`
+ - Join the Bot to the Discord Guild: 
+   - Return to https://discord.com/developers/applications [log in if needed]; open the page for your Bot.
+   - On the left, click OAuth and scroll down to the Bot Permissions section.
+   - Check the boxen for the following permissions:
+     - General Permissions
+       - View Channels
+     - Text Permissions
+       - Send Messages
+       - Manage Messages
+       - Embed Links
+       - Read Message History
+       - Use External Emojis
+       - Use Slash Commands
+   - Scroll up to Scopes, and check `bot`
+   - Click Copy to copy the pre-prepared Bot Invite link.
+   - If it is your server go to it yourself and invite the bot.
+   - If it is not, give the link to the server owner.
+ - Ensure the bot has the correct permissions on the Monitor and Control channels.
+ - Run the bot: `python3 ./bot.py`.  If it works, run in `screen` or use `pm2` for uptime monitoring.
