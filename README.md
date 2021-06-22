@@ -43,12 +43,12 @@ the bot will respond to:
     the bot is up and running.
   - `!list` - Causes the bot to respond with a message consisting of an alphebetized
     list of all monitored Twitch channels.
-  - `!watch somebody` - Adds the Twtich channel which can be found at the URL
-    https://twitch.tv/somebody to The List.  This channel does not have to have any
+  - `!watch dopeghoti` - Adds the Twtich channel which can be found at the URL
+    https://twitch.tv/dopeghoti to The List.  This channel does not have to have any
     association with anyone on the Discord server.  The bot will respond indicating
     whether or not the addition was successful.
-  - `!unwatch somebody` - Removes the Twitch channel which can be found at the URL
-    https://twitch.tv/somebody from The List if it is present. The bot will respond
+  - `!unwatch dopeghoti` - Removes the Twitch channel which can be found at the URL
+    https://twitch.tv/dopeghoti from The List if it is present. The bot will respond
     with a message indicating whether or not the removal was successful.
 
 - Planned Features
