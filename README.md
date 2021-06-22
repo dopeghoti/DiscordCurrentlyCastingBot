@@ -6,8 +6,8 @@ to action" message when a monitored channel goes live on Twitch.tv. It will also
 for any monitored channels to go _off_ the air and remove that message.  The end result
 of this is a nice, clean channel containing only working links to live channels, and
 no links to channels which are no longer live.  Any links to live thannels which are
-not affirmatively monitored will also be removed.  This is a much cleaner look that a
-`#self_promotion` channel containing pages and pages of lings to the same short list
+not affirmatively monitored will also be removed.  This is a much cleaner look than a
+`#self_promotion` channel containing pages and pages of links to the same short list
 of channels, many or most of which may not even be on the air at the time a person is
 perusing the channel.
 
