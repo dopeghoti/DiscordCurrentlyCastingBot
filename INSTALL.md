@@ -25,7 +25,8 @@
  - Join the Bot to the Discord Guild: 
    - Return to https://discord.com/developers/applications [log in if needed]; open the page for your Bot.
    - On the left, click OAuth and scroll down to the Bot Permissions section.
-   - Check the boxen for the following permissions:
+   - For the Scope, select `bot`
+   - Scroll down and check the boxen for the following permissions:
      - General Permissions
        - View Channels
      - Text Permissions
