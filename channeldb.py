@@ -45,6 +45,7 @@ class Database( object ):
     def query( self, sql ):
         """Execute the provised SQL query.  If SELECTing, you can get results from the cursor."""
         self.cursor.execute( sql )
+        self.__connection.commit()
 
     def getStreamerList( self ):
         """Fetches the list of active channels, returns a List of them."""
