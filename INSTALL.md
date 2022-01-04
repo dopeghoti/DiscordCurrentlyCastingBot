@@ -24,11 +24,11 @@
    - Copy the Client Secret, paste into `.env` for `TWITCH_SECRET`
  - Join the Bot to the Discord Guild: 
    - Return to https://discord.com/developers/applications [log in if needed]; open the page for your Bot.
-   - On the left, click OAuth and scroll down to the Bot Permissions section.
-   - For the Scope, select `bot`
+   - On the left, under OAuth2, click 'URL Generator'
+   - For the Scope, select `bot`, and you will see a Bot Permission section appear.
    - Scroll down and check the boxen for the following permissions:
      - General Permissions
-       - View Channels
+       - Read Messages / View Channels
      - Text Permissions
        - Send Messages
        - Manage Messages
@@ -36,8 +36,7 @@
        - Read Message History
        - Use External Emojis
        - Use Slash Commands
-   - Scroll up to Scopes, and check `bot`
-   - Click Copy to copy the pre-prepared Bot Invite link.
+   - Click Copy at the bottom of the page to copy the pre-prepared Bot Invite link.
    - If it is your server go to it yourself and invite the bot.
    - If it is not, give the link to the server owner.
  - Ensure the bot has the correct permissions on the Monitor and Control channels.
