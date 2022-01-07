@@ -77,7 +77,7 @@ def get_online_streamers():
     for channel in r.json()['data']:
         if DEBUG:
             log( f'Found data for channel {channel}' )
-        onlinechannels.append( channel['user_name'].lower() )
+        onlinechannels.append( channel['user_login'].lower() )
     if DEBUG:
         log( f'Parsed JSON response' )
     log( f'Online channels found: {onlinechannels}' )
