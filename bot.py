@@ -243,7 +243,7 @@ async def find_messages():
         msg = []
         log( 'Looks like Discord threw an error.  Oh well.' )
     finally:
-        continue
+        pass
     log( 'Fetched Discord channel messages' )
     needles = {} # from the haystack of messages
     reportedchannels = []
