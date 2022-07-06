@@ -10,7 +10,7 @@ from channeldb import Database
 
 load_dotenv( dotenv_path = './.env' )
 TOKEN    = os.getenv( 'DISCORD_TOKEN'   )
-GUILD    = os.getenv( 'DISCORD_GUILD'   )
+GUILD    = int( os.getenv( 'DISCORD_GUILD'   ) )
 PREFIX   = os.getenv( 'DISCORD_PREFIX'  )
 CONTROL  = int( os.getenv( 'DISCORD_CONTROL' ) )
 MONITOR  = int( os.getenv( 'DISCORD_MONITOR' ) )
@@ -20,6 +20,7 @@ DATABASE = os.getenv( 'CHANNELS' )
 WATCHLEN = int(os.getenv( 'WATCH_LENGTH' ))
 DEBUG    = False
 TOAUTH   = None
+MyServer, MonitorChannel, ControlChannel = ( None, None, None )
 
 def log( message ):
     logfile = open( 'bot.log', 'a' )
@@ -143,15 +144,19 @@ def watchlist():
     """Return a List of every user in the database"""
     return db.getStreamerList()
 
-bot = Bot( PREFIX )
-#bot = Bot( command_prefix = PREFIX, help_command = 'info' )
+intents = discord.Intents.default()
+intents.guilds = True
+intents.guild_messages = True
+intents.reactions = True
+intents.messages = True
+bot = Bot( command_prefix = PREFIX, intents = intents )
 db = Database()
 
 @bot.event
 async def on_ready():
-    # all_channels = bot.get_all_channels()
     global MyServer, MonitorChannel, ControlChannel
-    MyServer = bot.guilds[0]
+    log( f'Connected to Discord.  Looking for Guild ID {GUILD}.' )
+    MyServer = [x for x in bot.guilds if int(x.id) == int(GUILD)][0]
     MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
     ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     log( f'{bot.user.name} has connected to the {MyServer.name} Discord.' )
@@ -161,9 +166,7 @@ async def on_ready():
 
 @bot.command( name='hello', help='Test routine responds with a random answer' )
 async def hello_world( ctx ):
-    MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    global MyServer, MonitorChannel, ControlChannel
     if ctx.channel.id != ControlChannel.id:
         return
     hello_answers = [
@@ -178,8 +181,7 @@ async def hello_world( ctx ):
 
 @bot.command( name='watch', help='Add a channel to the watch list' )
 async def watch_channel( ctx, target ):
-    MyServer = bot.guilds[0]
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    global MyServer, MonitorChannel, ControlChannel
     if ctx.channel.id != ControlChannel.id:
         return
     await ctx.channel.delete_messages( [ ctx.message ] )
@@ -190,8 +192,7 @@ async def watch_channel( ctx, target ):
 
 @bot.command( name='unwatch', help='Remove a channel from the watch list' )
 async def unwatch_channel( ctx, target ):
-    MyServer = bot.guilds[0]
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    global MyServer, MonitorChannel, ControlChannel
     if ctx.channel.id != ControlChannel.id:
         return
     await ctx.channel.delete_messages( [ ctx.message ] )
@@ -202,9 +203,7 @@ async def unwatch_channel( ctx, target ):
 
 @bot.command( name='purge', help='Clear messages in the monitor channel' )
 async def purge( ctx, number ):
-    MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    global MyServer, MonitorChannel, ControlChannel
     if ctx.channel.id != ControlChannel.id:
         return
     msgs = []
@@ -214,8 +213,8 @@ async def purge( ctx, number ):
 
 @bot.command( name='refresh', help='Manually refresh the Monitor Channel' )
 async def refresh_channel( ctx ):
+    global MyServer, MonitorChannel, ControlChannel
     log( 'Manual monitor channel refresh not yet implemented.' )
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
     if ctx.channel.id != ControlChannel.id:
         return
     await ControlChannel.send( f'Manual refresh not yet implemented.' )
@@ -223,8 +222,7 @@ async def refresh_channel( ctx ):
 
 @bot.command( name='list', help='Report a list of everyone in the Database' )
 async def report_list( ctx ):
-    MyServer = bot.guilds[0]
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    global MyServer, MonitorChannel, ControlChannel
     if ctx.channel.id != ControlChannel.id:
         return
     streamers = watchlist()
@@ -233,8 +231,7 @@ async def report_list( ctx ):
 @loop( seconds = 90 )
 async def find_messages():
     log( 'Tick start.' )
-    MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
+    global MyServer, MonitorChannel, ControlChannel
     # Find list of message with apparent Twitch URLs
     pattern = re.compile( r'twitch\.tv/([^-=?&/\s]+)')
     msgs = await MonitorChannel.history().flatten()
@@ -318,9 +315,7 @@ find_messages.start()
 
 @bot.event
 async def on_command_error( ctx, error ):
-    MyServer = bot.guilds[0]
-    MonitorChannel = discord.utils.get( MyServer.text_channels, id = MONITOR )
-    ControlChannel = discord.utils.get( MyServer.text_channels, id = CONTROL )
+    global MyServer, MonitorChannel, ControlChannel
     if ctx.channel.id not in ( ControlChannel.id, MonitorChannel.id ):
         return
     if isinstance( error, commands.CommandNotFound ):
