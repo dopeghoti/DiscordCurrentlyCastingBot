@@ -236,11 +236,15 @@ async def find_messages():
     pattern = re.compile( r'twitch\.tv/([^-=?&/\s]+)')
     try:
         msgs = await MonitorChannel.history().flatten()
-    except DiscordServerError:
-        msg = []
-        log( 'Looks like Discord threw an error.  Oh well.' )
-    finally:
-        pass
+    except discord.errors.DiscordServerError:
+        msgs = []
+        log( 'Looks like Discord threw a server error.  Oh well.' )
+    except discord.errors.HTTPException:
+        msgs = []
+        log( 'Looks like Discord threw an HTTP Exception error.  Oh well.' )
+    except Exception as e:
+        msgs = []
+        log( f'Looks like an exception was thrown: {e}' )
     log( 'Fetched Discord channel messages' )
     needles = {} # from the haystack of messages
     reportedchannels = []
@@ -312,9 +316,14 @@ async def find_messages():
                     'to join the fun.'
                     ]
             response = f'{random.choice(prefixes)} `{watchedchannel.title()}` {random.choice(actions)}!  {random.choice(calls)} https://twitch.tv/{watchedchannel} {random.choice(suffixes)}'
-            await MonitorChannel.send( response )
-        else:
-            pass
+            try:
+                await MonitorChannel.send( response )
+            except discord.errors.DiscordServerError:
+                log( 'Looks like Discord threw a server error.  Oh well.' )
+            except discord.errors.HTTPException:
+                log( 'Looks like Discord threw an HTTP Exception error.  Oh well.' )
+            except Exception as e:
+                log( f'Looks like an exception was thrown: {e}' )
     log( 'Tick end.' )
 find_messages.before_loop( bot.wait_until_ready )
 find_messages.start()
